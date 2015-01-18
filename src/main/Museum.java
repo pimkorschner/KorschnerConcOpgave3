@@ -17,8 +17,11 @@ public class Museum {
 	private int nrOfBeroemdheden = 0;
 	private int beroemdhedenCount = 0;
 	private int burgerCount = 0;
+	private int burgersBinnen = 0;
+	private int beroemdBinnen = 0;
 	
 	private boolean beroemdhedenInRij = false, burgersInRij = false, closedToBurgers = false, closedToBeroemdheden = false, burgerInvite = false, beroemdheidInvite = false, finBurger = false, finBeroemd = false;
+	private boolean burgerInList = false;
 	
 //	private Burger[] binnenBurger = new Burger[World.NR_BURGERS];
 	public List<Persoon> list = Collections.synchronizedList(new ArrayList<Persoon>());
@@ -54,25 +57,33 @@ public class Museum {
 			}
 			burgerCount++;
 			newBurger.signal();
-			System.out.println(Thread.currentThread().getName() + " staat in de burger rij");
+//			System.out.println(Thread.currentThread().getName() + " staat in de burger rij");
 				
-			while(!burgerInvite) {
-				burgerInvitation.await();
-			}
-			burgerInvite = false;
+//			while(!burgerInvite) {
+//				burgerInvitation.await();
+//			}
+//			burgerInvite = false;
 			System.out.println(Thread.currentThread().getName() + " is in line");
 			
 			burgerCount--;
 			burgerOpenPlek.signal();
 			
-			binnenBurger = (Burger) Thread.currentThread();
+			burgersBinnen++;
+			
+//			binnenBurger = (Burger) Thread.currentThread();
+//			list.add((Burger) Thread.currentThread());
+			putIfAbsent((Burger)Thread.currentThread());
+			burgerInList = true;
 			readyToEnterBurger.signal();
 			//hier dus het museum binnen
+			
 			
 			while(!finBurger) {
 				finishedBurger.await();
 			}
 			finBurger = false;
+			
+			burgersBinnen--;
 			System.out.println(Thread.currentThread().getName() + " is klaar!");
 		} finally {
 			lock.unlock();
@@ -108,17 +119,20 @@ public class Museum {
 		try {
 			System.out.println("toegangsregelaar zit in permitAccess");
 			//toegangsregelaar wakker maken
-			while(noBurgers()) {
+			while(noBurgerLineAvailable()) {
 				newBurger.await();
 			}
 			
-			burgerInvite = true;
-			burgerInvitation.signal();
+//			burgerInvite = true;
+//			burgerInvitation.signalAll();
 			
-			while (binnenBurger == null)
+			while (!burgerInList)
 				readyToEnterBurger.await();
 			
-			return binnenBurger;
+			Persoon juisteBurger = list.get(list.size()-1);
+			burgerInList = false;
+			
+			return juisteBurger;
 		} finally {
 			lock.unlock();
 		}
@@ -127,9 +141,10 @@ public class Museum {
 	public void showOut(Persoon persoon) {
 		lock.lock();
 		try {
-			binnenBurger = null;
+			list.remove(persoon);
+//			binnenBurger = null;
 			finBurger = true;
-			finishedBurger.signal();
+			finishedBurger.signalAll();
 		} finally {
 			lock.unlock();
 		}
