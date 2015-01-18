@@ -1,12 +1,9 @@
 package main;
 
-public class Beroemdheid extends Thread {
-	
-	private Museum museum;
+public class Beroemdheid extends Persoon {
 	
 	public Beroemdheid(String name, Museum museum) {
-		super(name);
-		museum = this.museum;
+		super(name, museum);
 	}
 	
 	public void run() {

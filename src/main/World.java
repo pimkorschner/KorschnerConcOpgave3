@@ -2,7 +2,7 @@ package main;
 
 public class World {
 	
-	private static final int NR_BURGERS = 100;
+	public static final int NR_BURGERS = 10;
 	private static final int NR_BEROEMDHEDEN = 5;
 
 	public static void main(String[] args) {

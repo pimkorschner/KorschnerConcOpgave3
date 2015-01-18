@@ -1,60 +1,160 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Museum {
 	
-	private static final int NR_BURGERS = 100;
+//	private static final int NR_BURGERS = 100;
 	
 	Lock lock;
 	
 	private int nrOfBurgers = 0;
 	private int nrOfBeroemdheden = 0;
-	private int BeroemdhedenCount = 0;
+	private int beroemdhedenCount = 0;
+	private int burgerCount = 0;
 	
-	private boolean beroemdhedenInRij = false, burgersInRij = false, closedToBurgers = false, closedToBeroemdheden = false;
+	private boolean beroemdhedenInRij = false, burgersInRij = false, closedToBurgers = false, closedToBeroemdheden = false, burgerInvite = false, beroemdheidInvite = false, finBurger = false, finBeroemd = false;
 	
-	private Burger[] binnenBurger = new Burger[NR_BURGERS];
+//	private Burger[] binnenBurger = new Burger[World.NR_BURGERS];
+	public List<Persoon> list = Collections.synchronizedList(new ArrayList<Persoon>());
+	private Burger binnenBurger;
 	private Beroemdheid binnenBeroemdheid;
 	
-	private Condition beroemdheidOpenPlek, burgerOpenPlek, invitation, finished, newBurger, newBeroemdheid, readyToEnterBurger, readyToEnterBeroemdheid;
-	
+	private Condition newLine, beroemdheidOpenPlek, burgerOpenPlek, burgerInvitation, beroemdInvitation, finishedBurger, finishedBeroemdheid, newBurger, newBeroemdheid, readyToEnterBurger, readyToEnterBeroemdheid;
 	
 	public Museum() {
 		lock = new ReentrantLock();
 		
 		beroemdheidOpenPlek = lock.newCondition();
 		burgerOpenPlek = lock.newCondition();
-		invitation = lock.newCondition();
-		finished = lock.newCondition();
+		burgerInvitation = lock.newCondition();
+		beroemdInvitation = lock.newCondition();
+		finishedBurger = lock.newCondition();
+		finishedBeroemdheid = lock.newCondition();
 		newBurger = lock.newCondition();
 		newBeroemdheid = lock.newCondition();
 		readyToEnterBurger = lock.newCondition();
 		readyToEnterBeroemdheid = lock.newCondition();
+		
+		newLine = lock.newCondition();
 	}
 	
 	public void visitBurger() throws InterruptedException {
 		lock.lock();
 		try {
-			while(!closedToBurgers) {
-				readyToEnterBurger.await();
+			System.out.println(Thread.currentThread().getName() + " zit in visitBurger()");
+			//deze om de toegangsregelaar wakker te maken.
+			while(noBurgerLineAvailable()) {
+				burgerOpenPlek.await();
+			}
+			burgerCount++;
+			newBurger.signal();
+			System.out.println(Thread.currentThread().getName() + " staat in de burger rij");
+				
+			while(!burgerInvite) {
+				burgerInvitation.await();
+			}
+			burgerInvite = false;
+			System.out.println(Thread.currentThread().getName() + " is in line");
+			
+			burgerCount--;
+			burgerOpenPlek.signal();
+			
+			binnenBurger = (Burger) Thread.currentThread();
+			readyToEnterBurger.signal();
+			//hier dus het museum binnen
+			
+			while(!finBurger) {
+				finishedBurger.await();
+			}
+			finBurger = false;
+			System.out.println(Thread.currentThread().getName() + " is klaar!");
+		} finally {
+			lock.unlock();
+		}
+	}
+	
+	public void visitBeroemdheid() throws InterruptedException {
+		lock.lock();
+		try {
+			/*
+			 * Kijken of beroemdheden binnen mogen of dat er al 3 binnen zijn geweest en het tijd is voor burgers
+			 * daarna in de rij wachten
+			 */
+			while(!closedToBeroemdheden) {
+				readyToEnterBeroemdheid.await();
 			}
 			
+			/*
+			 * When there's no celeb in the building enter the museum
+			 */
 			
+			/*
+			 * Toegangsregelaar.visit() dus een readyForVisit voor beroemdheden
+			 */
 			
 		} finally {
 			lock.unlock();
 		}
 	}
 	
-	public void visitBeroemdheid() {
-		
+	public Persoon showIn() throws InterruptedException {
+		lock.lock();
+		try {
+			System.out.println("toegangsregelaar zit in permitAccess");
+			//toegangsregelaar wakker maken
+			while(noBurgers()) {
+				newBurger.await();
+			}
+			
+			burgerInvite = true;
+			burgerInvitation.signal();
+			
+			while (binnenBurger == null)
+				readyToEnterBurger.await();
+			
+			return binnenBurger;
+		} finally {
+			lock.unlock();
+		}
 	}
 	
-	private boolean noBeroemdheden(){
-		return nrOfBeroemdheden == 0;
+	public void showOut(Persoon persoon) {
+		lock.lock();
+		try {
+			binnenBurger = null;
+			finBurger = true;
+			finishedBurger.signal();
+		} finally {
+			lock.unlock();
+		}
+	}
+	
+	public boolean noBeroemdheden(){
+		return beroemdhedenCount == 0;
+	}
+	
+	public boolean noBurgers() {
+		return burgerCount == 0;
+	}
+	
+	public boolean noBurgerLineAvailable() {
+		return burgerCount == World.NR_BURGERS;
+	}
+	
+	public boolean putIfAbsent(Persoon p) {
+		synchronized (list) {
+			boolean absent = !list.contains(p);
+			if(absent) {
+				list.add(p);
+			}
+			return absent;
+		}
 	}
 	
 }

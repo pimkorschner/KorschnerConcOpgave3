@@ -1,17 +1,20 @@
 package main;
 
-public class Burger extends Thread {
-	
-	private Museum museum;
+public class Burger extends Persoon {
 	
 	public Burger(String name, Museum museum) {
-		super(name);
-		museum = this.museum;
+		super(name, museum);
 	}
 	
 	public void run() {
 		while(true) {
-			live();
+			try {
+				live();
+				museum.visitBurger();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
