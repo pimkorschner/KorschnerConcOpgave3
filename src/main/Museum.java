@@ -79,6 +79,10 @@ public class Museum {
 			while(closedToBeroemdheden()) {
 				beroemdheidToestaan.await();
 			}
+			//hier wordt een beroemdheid al binnen gelaten, dus kan er gekeken worden of er al 3 zijn geweest
+			if(beroemdhedenCount == 3) {
+				beroemdhedenCount = 0;
+			}
 			beroemdheidBinnen = true;
 			beroemdhedenInRij--;
 			
@@ -115,11 +119,6 @@ public class Museum {
 			//laat een andere beroemdheid kijken of hij al naar binnen kan en laat alle burgers kijken of ze naar binnen kunnen
 			beroemdheidToestaan.signal();
 			museumOpen.signalAll();
-			
-			//nu kan de count van beroemdheden weer naar 0 gezet worden, want de burgers en beroemdheden hebben al gekeken wie naar binnen kan
-			if(beroemdhedenCount == 3) {
-				beroemdhedenCount = 0;
-			}
 			
 		} finally {
 			lock.unlock();
