@@ -1,15 +1,10 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Museum {
-	
-//	private static final int NR_BURGERS = 100;
 	
 	Lock lock;
 	
@@ -17,16 +12,9 @@ public class Museum {
 	private int beroemdhedenInRij = 0;
 	private int beroemdhedenCount = 0;
 	private int burgersBinnen = 0;
-//	private int beroemdBinnen = 0;
-	
-//	private boolean closedToBurgers = false, closedToBeroemdheden = false, burgerInvite = false, beroemdheidInvite = false, finBurger = false, finBeroemd = false;
-//	private boolean burgerInList = false;
+
 	private boolean beroemdheidBinnen = false;
 	
-//	private Burger binnenBurger;
-//	private Beroemdheid binnenBeroemdheid;
-	
-//	private Condition newLine, beroemdheidOpenPlek, burgerOpenPlek, burgerInvitation, beroemdInvitation, finishedBurger, finishedBeroemdheid, newBurger, newBeroemdheid, readyToEnterBurger, readyToEnterBeroemdheid;
 	private Condition beroemdheidToestaan, rijOpen, museumOpen;  
 	
 	public Museum() {
@@ -35,32 +23,19 @@ public class Museum {
 		beroemdheidToestaan = lock.newCondition();
 		rijOpen = lock.newCondition();
 		museumOpen = lock.newCondition();
-
-//		beroemdheidOpenPlek = lock.newCondition();
-//		burgerOpenPlek = lock.newCondition();
-//		burgerInvitation = lock.newCondition();
-//		beroemdInvitation = lock.newCondition();
-//		finishedBurger = lock.newCondition();
-//		finishedBeroemdheid = lock.newCondition();
-//		newBurger = lock.newCondition();
-//		newBeroemdheid = lock.newCondition();
-//		readyToEnterBurger = lock.newCondition();
-//		readyToEnterBeroemdheid = lock.newCondition();
-		
-//		newLine = lock.newCondition();
 	}
 	
 	public void visitBurger() throws InterruptedException {
 		lock.lock();
 		try {
-			//hier in de rij gaan staan. 
+			//zodat er geen nieuwe burgers aansluiten als de burgers in de rij naar binnen mogen en er zijn wachtende beroemdheden
 			while(rijDicht()) {
 				rijOpen.await();
 			}
 			burgersInRij++;
 			System.out.println(Thread.currentThread().getName() + " gaat in de rij staan");
 				
-			//als het museum dicht is betekent dat dat er een celeb binnen is. Als deze celeb het gebouw verlaat moet hij all
+			//als het museum dicht is betekent dat dat er een celeb binnen is. Als deze celeb het gebouw verlaat moet hij alle burgers signallen zodat deze check opnieuw uitgevoerd kan worden
 			while(museumDicht()) {
 				museumOpen.await();
 			}
@@ -124,55 +99,6 @@ public class Museum {
 			lock.unlock();
 		}
 	}
-/*	
-	public Persoon showIn() throws InterruptedException {
-		lock.lock();
-		try {
-			//toegangsregelaar wakker maken
-//			while(noBurgerLineAvailable()) {
-//				newBurger.await();
-//			}
-			
-//			burgerInvite = true;
-//			burgerInvitation.signalAll();
-			
-			while (!burgerInList)
-				readyToEnterBurger.await();
-			
-//			Persoon juisteBurger = list.get(list.size()-1);
-			burgerInList = false;
-			
-//			return juisteBurger;
-		} finally {
-			lock.unlock();
-		}
-		return binnenBeroemdheid;
-	}
-	
-	public void showOut(Persoon persoon) {
-		lock.lock();
-		try {
-//			list.remove(persoon);
-//			binnenBurger = null;
-			finBurger = true;
-			finishedBurger.signalAll();
-		} finally {
-			lock.unlock();
-		}
-	}
-	
-	public boolean noBeroemdheden(){
-		return beroemdhedenCount == 0;
-	}
-	
-	public boolean noBurgers() {
-		return burgerCount == 0;
-	}
-	
-	public boolean noBurgerLineAvailable() {
-		return burgerCount == World.NR_BURGERS;
-	}
-	*/
 	
 	private boolean rijDicht() {
 		return (beroemdhedenInRij > 0 && beroemdhedenCount == 3);
