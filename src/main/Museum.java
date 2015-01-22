@@ -75,7 +75,8 @@ public class Museum {
 		lock.lock();
 		try {
 			beroemdhedenInRij++;
-			while(closedToBeroemdheden) {
+			System.out.println(Thread.currentThread().getName() + " gaat in de rij staan.");
+			while(closedToBeroemdheden()) {
 				beroemdheidToestaan.await();
 			}
 			beroemdheidBinnen = true;
@@ -114,6 +115,11 @@ public class Museum {
 			//laat een andere beroemdheid kijken of hij al naar binnen kan en laat alle burgers kijken of ze naar binnen kunnen
 			beroemdheidToestaan.signal();
 			museumOpen.signalAll();
+			
+			//nu kan de count van beroemdheden weer naar 0 gezet worden, want de burgers en beroemdheden hebben al gekeken wie naar binnen kan
+			if(beroemdhedenCount == 3) {
+				beroemdhedenCount = 0;
+			}
 			
 		} finally {
 			lock.unlock();
@@ -177,8 +183,8 @@ public class Museum {
 		return ((beroemdhedenInRij > 0 && beroemdhedenCount < 3) || beroemdheidBinnen);
 	}
 	
-	private boolean geenBeroemdheidToestaan() {
-		return ((beroemdhedenCount == 3 && burgersInRij > 0) || burgersBinnen > 0 || beroemdheidBinnen);
+	private boolean closedToBeroemdheden() {
+		return ((beroemdhedenCount >= 3 && burgersInRij > 0) || burgersBinnen > 0 || beroemdheidBinnen);
 	}
 	
 }

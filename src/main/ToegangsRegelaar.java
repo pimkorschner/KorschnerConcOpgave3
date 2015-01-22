@@ -12,11 +12,10 @@ public class ToegangsRegelaar extends Thread {
 	public void run() {
 		while(true) {
 			try {
-				persoon = museum.showIn();
+//				persoon = museum.showIn();
 				visit();
-				museum.showOut(persoon);
-			} catch(InterruptedException e) {
-				e.printStackTrace();
+//				museum.showOut(perso.on);
+			} catch( Exception e) {
 			}
 			/*
 			 * Check of er een beroemdheid is, zoja, laat die 1 binnen

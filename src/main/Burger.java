@@ -11,6 +11,8 @@ public class Burger extends Persoon {
 			try {
 				live();
 				museum.visitBurger();
+				bezoekMuseum();
+				museum.showOutBurger();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -26,6 +28,7 @@ public class Burger extends Persoon {
 	
 	private void bezoekMuseum() {
 		try {
+			System.out.println(getName() + " bezoekt het museum");
 			Thread.sleep((int)(Math.random() * 10000));
 		} catch(InterruptedException e) {
 			
