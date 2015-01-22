@@ -27,26 +27,28 @@ public class Museum {
 	private Burger binnenBurger;
 	private Beroemdheid binnenBeroemdheid;
 	
-	private Condition newLine, beroemdheidOpenPlek, burgerOpenPlek, burgerInvitation, beroemdInvitation, finishedBurger, finishedBeroemdheid, newBurger, newBeroemdheid, readyToEnterBurger, readyToEnterBeroemdheid;
+//	private Condition newLine, beroemdheidOpenPlek, burgerOpenPlek, burgerInvitation, beroemdInvitation, finishedBurger, finishedBeroemdheid, newBurger, newBeroemdheid, readyToEnterBurger, readyToEnterBeroemdheid;
 	private Condition beroemdheidToestaan, rijOpen, museumOpen;  
 	
 	public Museum() {
 		lock = new ReentrantLock();
 		
+		beroemdheidToestaan = lock.newCondition();
+		rijOpen = lock.newCondition();
+		museumOpen = lock.newCondition();
+
+//		beroemdheidOpenPlek = lock.newCondition();
+//		burgerOpenPlek = lock.newCondition();
+//		burgerInvitation = lock.newCondition();
+//		beroemdInvitation = lock.newCondition();
+//		finishedBurger = lock.newCondition();
+//		finishedBeroemdheid = lock.newCondition();
+//		newBurger = lock.newCondition();
+//		newBeroemdheid = lock.newCondition();
+//		readyToEnterBurger = lock.newCondition();
+//		readyToEnterBeroemdheid = lock.newCondition();
 		
-		
-		beroemdheidOpenPlek = lock.newCondition();
-		burgerOpenPlek = lock.newCondition();
-		burgerInvitation = lock.newCondition();
-		beroemdInvitation = lock.newCondition();
-		finishedBurger = lock.newCondition();
-		finishedBeroemdheid = lock.newCondition();
-		newBurger = lock.newCondition();
-		newBeroemdheid = lock.newCondition();
-		readyToEnterBurger = lock.newCondition();
-		readyToEnterBeroemdheid = lock.newCondition();
-		
-		newLine = lock.newCondition();
+//		newLine = lock.newCondition();
 	}
 	
 	public void visitBurger() throws InterruptedException {
