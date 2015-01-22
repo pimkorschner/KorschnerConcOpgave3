@@ -16,16 +16,15 @@ public class Museum {
 	private int burgersInRij = 0;
 	private int beroemdhedenInRij = 0;
 	private int beroemdhedenCount = 0;
-	private int burgerCount = 0;
 	private int burgersBinnen = 0;
-	private int beroemdBinnen = 0;
+//	private int beroemdBinnen = 0;
 	
-	private boolean closedToBurgers = false, closedToBeroemdheden = false, burgerInvite = false, beroemdheidInvite = false, finBurger = false, finBeroemd = false;
-	private boolean burgerInList = false;
+//	private boolean closedToBurgers = false, closedToBeroemdheden = false, burgerInvite = false, beroemdheidInvite = false, finBurger = false, finBeroemd = false;
+//	private boolean burgerInList = false;
 	private boolean beroemdheidBinnen = false;
 	
-	private Burger binnenBurger;
-	private Beroemdheid binnenBeroemdheid;
+//	private Burger binnenBurger;
+//	private Beroemdheid binnenBeroemdheid;
 	
 //	private Condition newLine, beroemdheidOpenPlek, burgerOpenPlek, burgerInvitation, beroemdInvitation, finishedBurger, finishedBeroemdheid, newBurger, newBeroemdheid, readyToEnterBurger, readyToEnterBeroemdheid;
 	private Condition beroemdheidToestaan, rijOpen, museumOpen;  
