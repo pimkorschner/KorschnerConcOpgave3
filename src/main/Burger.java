@@ -24,6 +24,14 @@ public class Burger extends Persoon {
 		} catch (InterruptedException e) {}
 	}
 	
+	private void bezoekMuseum() {
+		try {
+			Thread.sleep((int)(Math.random() * 10000));
+		} catch(InterruptedException e) {
+			
+		}
+	}
+	
 	public String getBurgerName() {
 		return getName();
 	}

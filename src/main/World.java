@@ -2,14 +2,14 @@ package main;
 
 public class World {
 	
-	public static final int NR_BURGERS = 10;
+	public static final int NR_BURGERS = 50;
 	private static final int NR_BEROEMDHEDEN = 5;
 
 	public static void main(String[] args) {
 		Museum museum = new Museum();
 		Thread[] burger;
 		Thread[] beroemdheid;
-		Thread toegangRegelaar;
+//		Thread toegangRegelaar;
 		
 		burger = new Thread[NR_BURGERS];
 		for (int i = 0; i < NR_BURGERS; i++) {
@@ -23,8 +23,8 @@ public class World {
 			beroemdheid[i].start();
 		}
 		
-		toegangRegelaar = new ToegangsRegelaar(museum);
-		toegangRegelaar.start();
+//		toegangRegelaar = new ToegangsRegelaar(museum);
+//		toegangRegelaar.start();
 		
 	}
 }
