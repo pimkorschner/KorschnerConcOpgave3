@@ -41,6 +41,11 @@ public class Museum {
 			}
 			burgersBinnen++;
 			burgersInRij--;
+			
+			//kijken of er beroemdheden in de rij staan, als de beroemdheden niet achter elkaar naar binnen gaan moet de count gereset worden
+			if(beroemdhedenInRij == 0) {
+				beroemdhedenCount = 0;
+			}
 		} finally {
 			lock.unlock();
 		}
@@ -109,7 +114,7 @@ public class Museum {
 	}
 	
 	private boolean closedToBeroemdheden() {
-		return ((beroemdhedenCount >= 3 && burgersInRij > 0) || burgersBinnen > 0 || beroemdheidBinnen);
+		return ((beroemdhedenCount == 3 && burgersInRij > 0) || burgersBinnen > 0 || beroemdheidBinnen);
 	}
 	
 }
